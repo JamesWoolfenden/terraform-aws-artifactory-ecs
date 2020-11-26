@@ -1,0 +1,40 @@
+[
+  {
+    "command": [],
+    "cpu": 0,
+    "entryPoint": [],
+    "environment": [
+      {
+        "name": "MASTER_KEY",
+        "value": "4aa9b46c844a60a113b88a112cc2ddc2692304f33e47ea56dac7d40eb424208d"
+      }
+    ],
+    "essential": true,
+    "image": "docker.bintray.io/jfrog/artifactory-pro:latest",
+    "links": [],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/artifactory",
+        "awslogs-region": "eu-west-2",
+        "awslogs-stream-prefix": "ecs"
+      }
+    },
+    "memoryReservation": 2048,
+    "mountPoints": [],
+    "name": "artifactory-pro",
+    "portMappings": [
+      {
+        "containerPort": 8082,
+        "hostPort": 8082,
+        "protocol": "tcp"
+      },
+      {
+        "containerPort": 8081,
+        "hostPort": 8081,
+        "protocol": "tcp"
+      }
+    ],
+    "volumesFrom": []
+  }
+]

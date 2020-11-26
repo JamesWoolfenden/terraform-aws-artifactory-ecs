@@ -1,3 +1,10 @@
+variable "ssh_cidr" {
+  type = list
+}
+
+variable "allowed_cidr" {
+  type = list
+}
 variable "common_tags" {
   description = "This is to help you add tags to your cloud objects"
   type        = map
@@ -5,10 +12,6 @@ variable "common_tags" {
 
 variable "vpc_id" {
   type = string
-}
-
-variable "vpc_cidr" {
-  type = list
 }
 
 variable "subnet_ids" {
