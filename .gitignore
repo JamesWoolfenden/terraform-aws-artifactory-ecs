@@ -22,3 +22,4 @@ lambda
 *.bak
 .terraform.tfstate.lock.info
 original*
+id_rsa*

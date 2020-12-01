@@ -81,3 +81,8 @@ variable "zone_id" {
 variable "record" {
   type = string
 }
+
+variable "outbound" {
+  type    = list
+  default = ["0.0.0.0/0"]
+}

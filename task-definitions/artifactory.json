@@ -1,53 +1,53 @@
 [
   {
-    "logConfiguration": {
-      "logDriver": "awslogs",
-      "secretOptions": [],
-      "options": {
-        "awslogs-group": "/ecs/artifactory",
-        "awslogs-region": "${region}",
-        "awslogs-stream-prefix": "artifactory"
-      }
-    },
-    "portMappings": [
-      {
-        "hostPort": 8081,
-        "protocol": "tcp",
-        "containerPort": 8081
-      },
-      {
-        "hostPort": 8082,
-        "protocol": "tcp",
-        "containerPort": 8082
-      }
-    ],
-    "linuxParameters": null,
     "cpu": 0,
+    "dependsOn": null,
+    "disableNetworking": null,
     "environment": [
       {
         "name": "ARTIFACTORY_MASTER_KEY",
         "value": "${master_key}"
       }
     ],
-    "resourceRequirements": null,
-    "workingDirectory": null,
+    "essential": true,
+    "firelensConfiguration": null,
+    "hostname": null,
+    "image": "docker.bintray.io/jfrog/artifactory-pro:latest",
+    "interactive": null,
+    "linuxParameters": null,
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/artifactory",
+        "awslogs-region": "${region}",
+        "awslogs-stream-prefix": "artifactory"
+      },
+      "secretOptions": []
+    },
     "memory": null,
     "memoryReservation": null,
-    "volumesFrom": [],
-    "stopTimeout": null,
-    "image": "docker.bintray.io/jfrog/artifactory-pro:latest",
-    "startTimeout": null,
-    "firelensConfiguration": null,
-    "dependsOn": null,
-    "disableNetworking": null,
-    "interactive": null,
-    "essential": true,
     "mountpoints": [],
-    "hostname": null,
-    "pseudoTerminal": null,
-    "user": null,
-    "readonlyRootFilesystem": null,
+    "name": "artifactory",
+    "portMappings": [
+      {
+        "containerPort": 8081,
+        "hostPort": 8081,
+        "protocol": "tcp"
+      },
+      {
+        "containerPort": 8082,
+        "hostPort": 8082,
+        "protocol": "tcp"
+      }
+    ],
     "privileged": null,
-    "name": "artifactory"
+    "pseudoTerminal": null,
+    "readonlyRootFilesystem": null,
+    "resourceRequirements": null,
+    "startTimeout": null,
+    "stopTimeout": null,
+    "user": null,
+    "volumesFrom": [],
+    "workingDirectory": null
   }
 ]

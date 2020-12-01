@@ -14,6 +14,6 @@ resource "local_file" "private_ssh" {
 }
 
 variable "key_name" {
- type=string
- default="artifactory" 
+  type    = string
+  default = "artifactory"
 }
