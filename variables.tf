@@ -26,6 +26,7 @@ variable "db_allocated_storage" {
   description = "The size of the database (Gb)"
   default     = "5"
 }
+
 variable "common_tags" {
   type    = map
   default = {}
@@ -44,11 +45,39 @@ variable "cluster_arn" {
   type = string
 }
 
-variable "ssh_cidr" {
+variable "allowed_cidr" {
   type = list
 }
 
 
-variable "allowed_cidr" {
-  type = list
+variable "targetgroup_ssl_name" {
+  default = "artifactoryssl"
+}
+
+variable "targetgroup_http_name" {
+  default = "artifactoryhttp"
+}
+
+variable "master_key" {
+  type = string
+}
+
+variable "instance_SG" {
+  type = string
+}
+variable "region" {
+  type = string
+}
+
+variable "ssl_certificate_id" {
+  type = string
+}
+
+
+variable "zone_id" {
+  type = string
+}
+
+variable "record" {
+  type = string
 }

@@ -14,6 +14,8 @@ export MASTER_KEY=$(openssl rand -hex 32)
 echo ${MASTER_KEY}
 ```
 
+**Ensure Cluster instance role give cloudwatch logs access**
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 

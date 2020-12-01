@@ -27,6 +27,26 @@
       {
         "name": "ARTIFACTORY_MASTER_KEY",
         "value": "${master_key}"
+      },
+      {
+        "name": "DB_DRIVER",
+        "value": "${db_driver}"
+      },
+      {
+        "name": "DB_PASSWORD",
+        "value": "${db_password}"
+      },
+      {
+        "name": "DB_TYPE",
+        "value": "${db_type}"
+      },
+      {
+        "name": "DB_URL",
+        "value": "jdbc:${db_type}://${db_url}/${db_name}"
+      },
+      {
+        "name": "DB_USER",
+        "value": "${db_user}"
       }
     ],
     "resourceRequirements": null,

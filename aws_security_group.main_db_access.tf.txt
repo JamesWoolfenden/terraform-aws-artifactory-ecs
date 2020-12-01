@@ -12,7 +12,7 @@ resource "aws_security_group_rule" "allow_db_access" {
   from_port   = "3306"
   to_port     = "3306"
   protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
+  cidr_blocks = [data.aws_vpc.cluster.cidr_block]
 
   security_group_id = aws_security_group.main_db_access.id
 }
@@ -33,3 +33,8 @@ resource "aws_db_subnet_group" "main_db_subnet_group" {
   description = "RDS subnet group"
   subnet_ids  = var.subnet_ids
 }
+
+
+data "aws_vpc" "cluster" {
+  id = var.vpc_id
+} 

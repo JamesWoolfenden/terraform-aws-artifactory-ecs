@@ -1,6 +1,4 @@
-variable "ssh_cidr" {
-  type = list
-}
+
 
 variable "allowed_cidr" {
   type = list
@@ -16,4 +14,37 @@ variable "vpc_id" {
 
 variable "subnet_ids" {
   type = list
+}
+
+
+variable "master_key" {
+  type = string
+}
+
+variable "region" {
+  type = string
+}
+
+variable "cluster_name" {
+  type = string
+}
+
+variable "instances" {
+  type = list
+}
+
+variable "instance_SG" {
+  type = string
+}
+
+variable "ssl_certificate_id" {
+  type = string
+}
+
+variable "record" {
+  type = string
+}
+
+variable "zone_id" {
+  type = string
 }
