@@ -19,6 +19,7 @@ variable "db_password" {
   type        = string
   description = "Database password"
   default     = "password"
+  sensitive   = true
 }
 
 variable "db_allocated_storage" {
@@ -28,13 +29,13 @@ variable "db_allocated_storage" {
 }
 
 variable "common_tags" {
-  type    = map
+  type    = map(any)
   default = {}
 }
 
 
 variable "subnet_ids" {
-  type = list
+  type = list(any)
 }
 
 variable "vpc_id" {
@@ -46,9 +47,8 @@ variable "cluster_arn" {
 }
 
 variable "allowed_cidr" {
-  type = list
+  type = list(any)
 }
-
 
 variable "targetgroup_ssl_name" {
   default = "artifactoryssl"
@@ -83,6 +83,10 @@ variable "record" {
 }
 
 variable "outbound" {
-  type    = list
+  type    = list(any)
   default = ["0.0.0.0/0"]
+}
+
+variable "instances" {
+  type = list(any)
 }

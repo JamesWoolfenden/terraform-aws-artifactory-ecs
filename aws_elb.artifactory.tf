@@ -40,7 +40,3 @@ resource "aws_elb" "artifactory" {
   tags            = {}
 
 }
-
-variable "instances" {
-  type = list
-}

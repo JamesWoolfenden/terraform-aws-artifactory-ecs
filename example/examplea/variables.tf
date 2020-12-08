@@ -1,11 +1,13 @@
-
+variable "ssh_cidr" {
+  type = list(any)
+}
 
 variable "allowed_cidr" {
-  type = list
+  type = list(any)
 }
 variable "common_tags" {
   description = "This is to help you add tags to your cloud objects"
-  type        = map
+  type        = map(any)
 }
 
 variable "vpc_id" {
@@ -13,7 +15,7 @@ variable "vpc_id" {
 }
 
 variable "subnet_ids" {
-  type = list
+  type = list(any)
 }
 
 
@@ -30,7 +32,7 @@ variable "cluster_name" {
 }
 
 variable "instances" {
-  type = list
+  type = list(any)
 }
 
 variable "instance_SG" {
