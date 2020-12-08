@@ -12,7 +12,7 @@ One of three Artifactory modules, this one supports deploying Artifactory pro in
 
 ## TODO
 
-The template works as is but to use if you use it in production you will need to:
+The template works as is, but if you use it in production you will need to (apart from getting a licence for JFrog...):
 
 - update the configuration of the container to support RDS and S3/EFS. I have included the disabled Terraform (.txt extension) to support this.
 - add the licence at launch time
