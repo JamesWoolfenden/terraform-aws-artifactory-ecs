@@ -57,16 +57,13 @@ The Latest version supports Terraform v0.14.
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
-| Name | Version |
-|------|---------|
-| terraform | >= 0.14 |
-| aws | 3.20.0 |
+No requirements.
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | 3.20.0 |
+| aws | n/a |
 
 ## Inputs
 
