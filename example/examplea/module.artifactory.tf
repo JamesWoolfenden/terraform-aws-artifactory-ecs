@@ -12,4 +12,5 @@ module "artifactory" {
   instance_SG        = var.instance_SG
   record             = var.record
   zone_id            = var.zone_id
+  kms_key_id         = var.kms_key_id
 }

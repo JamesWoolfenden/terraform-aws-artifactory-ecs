@@ -9,6 +9,7 @@ variable "db_user" {
   description = "Database user name"
   default     = "artifactory"
 }
+
 variable "db_instance_class" {
   type        = string
   description = "The database instance type"
@@ -39,15 +40,18 @@ variable "subnet_ids" {
 }
 
 variable "vpc_id" {
-  type = string
+  description = "The VPC id"
+  type        = string
 }
 
 variable "cluster_arn" {
-  type = string
+  type        = string
+  description = "The ARN of the existing ECS Cluster"
 }
 
 variable "allowed_cidr" {
-  type = list(any)
+  type        = list(any)
+  description = "The allowed IP ranges"
 }
 
 variable "targetgroup_ssl_name" {
@@ -89,4 +93,14 @@ variable "outbound" {
 
 variable "instances" {
   type = list(any)
+}
+
+
+variable "retention_in_days" {
+  type    = string
+  default = 180
+}
+
+variable "kms_key_id" {
+  type = string
 }

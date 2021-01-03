@@ -31,7 +31,7 @@ Important **Ensure Cluster instance role give cloudwatch logs access**
 
 ## Usage
 
-Follow examplea as your guide or add *module.artifactory.tf* to your own Terraform code:
+Follow examplea as your guide or add _module.artifactory.tf_ to your own Terraform code:
 
 ```terraform
 module "artifactory" {
@@ -69,8 +69,8 @@ No requirements.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| allowed\_cidr | n/a | `list(any)` | n/a | yes |
-| cluster\_arn | n/a | `string` | n/a | yes |
+| allowed\_cidr | The allowed IP ranges | `list(any)` | n/a | yes |
+| cluster\_arn | The ARN of the existing ECS Cluster | `string` | n/a | yes |
 | common\_tags | n/a | `map(any)` | `{}` | no |
 | db\_allocated\_storage | The size of the database (Gb) | `string` | `"5"` | no |
 | db\_instance\_class | The database instance type | `string` | `"db.t2.small"` | no |
@@ -79,6 +79,7 @@ No requirements.
 | db\_user | Database user name | `string` | `"artifactory"` | no |
 | instance\_SG | n/a | `string` | n/a | yes |
 | instances | n/a | `list(any)` | n/a | yes |
+| kms\_key\_id | n/a | `string` | n/a | yes |
 | master\_key | n/a | `string` | n/a | yes |
 | outbound | n/a | `list(any)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | record | n/a | `string` | n/a | yes |
@@ -88,7 +89,7 @@ No requirements.
 | subnet\_ids | n/a | `list(any)` | n/a | yes |
 | targetgroup\_http\_name | n/a | `string` | `"artifactoryhttp"` | no |
 | targetgroup\_ssl\_name | n/a | `string` | `"artifactoryssl"` | no |
-| vpc\_id | n/a | `string` | n/a | yes |
+| vpc\_id | The VPC id | `string` | n/a | yes |
 | zone\_id | n/a | `string` | n/a | yes |
 
 ## Outputs
@@ -119,7 +120,7 @@ Please use the [issue tracker](https://github.com/JamesWoolfenden/terraform-aws-
 
 ## Copyrights
 
-Copyright � 2019-2020 James Woolfenden
+Copyright © 2019-2021 James Woolfenden
 
 ## License
 
