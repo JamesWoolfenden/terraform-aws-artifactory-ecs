@@ -21,6 +21,7 @@ lambda
 *backup
 *.bak
 .terraform.tfstate.lock.info
+.terraform.lock.hcl
 original*
 .terraform.lock.hcl
 id_rsa*
