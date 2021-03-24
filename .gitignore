@@ -25,4 +25,3 @@ tf.plan
 *.log
 output/*.json
 secrets.auto.tfvars
-original/
