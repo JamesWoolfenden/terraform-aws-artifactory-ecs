@@ -1,5 +1,6 @@
 resource "aws_elb" "artifactory" {
-  #checkov:skip= CKV_AWS_92: "Ensure the ELB has access logging enabled"
+  # checkov:skip=CKV_AWS_127: ADD REASON
+  # checkov:skip= CKV_AWS_92: "Ensure the ELB has access logging enabled"
   instances = var.instances
 
 
@@ -26,12 +27,12 @@ resource "aws_elb" "artifactory" {
     interval            = 30
   }
 
-
   cross_zone_load_balancing   = true
   idle_timeout                = 60
   connection_draining         = true
   connection_draining_timeout = 300
 
+  # tfsec:ignore:AWS005
   internal = false
 
   name            = "JFrog-Artifactory-Pro-ECS-ELB"

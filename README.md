@@ -67,61 +67,62 @@ No requirements.
 
 | Name | Version |
 |------|---------|
-| aws | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
 
 ## Modules
 
-No Modules.
+No modules.
 
 ## Resources
 
-| Name |
-|------|
-| [aws_cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) |
-| [aws_ecs_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ecs_cluster) |
-| [aws_ecs_service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_service) |
-| [aws_ecs_task_definition](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_task_definition) |
-| [aws_elb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elb) |
-| [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_role) |
-| [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) |
-| [aws_iam_role_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) |
-| [aws_iam_role_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) |
-| [aws_route53_record](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) |
-| [aws_security_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) |
-| [aws_security_group_rule](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) |
+| Name | Type |
+|------|------|
+| [aws_cloudwatch_log_group.artifactory](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_ecs_service.artifactory](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_service) | resource |
+| [aws_ecs_task_definition.artifactory](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_task_definition) | resource |
+| [aws_elb.artifactory](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elb) | resource |
+| [aws_iam_role.ecs_artifactory](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role_policy.ecs_artifactory](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy_attachment.artifactory](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_route53_record.www](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
+| [aws_security_group.elb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_security_group_rule.cidr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.fromelb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_ecs_cluster.artifactory](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ecs_cluster) | data source |
+| [aws_iam_role.ecs_service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_role) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| allowed\_cidr | The allowed IP ranges | `list(any)` | n/a | yes |
-| cluster\_arn | The ARN of the existing ECS Cluster | `string` | n/a | yes |
-| common\_tags | n/a | `map(any)` | `{}` | no |
-| db\_allocated\_storage | The size of the database (Gb) | `string` | `"5"` | no |
-| db\_instance\_class | The database instance type | `string` | `"db.t2.small"` | no |
-| db\_name | MySQL database name | `string` | `"artdb"` | no |
-| db\_password | Database password | `string` | `"password"` | no |
-| db\_user | Database user name | `string` | `"artifactory"` | no |
-| instance\_SG | n/a | `string` | n/a | yes |
-| instances | n/a | `list(any)` | n/a | yes |
-| kms\_key\_id | n/a | `string` | n/a | yes |
-| master\_key | n/a | `string` | n/a | yes |
-| outbound | n/a | `list(any)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
-| record | n/a | `string` | n/a | yes |
-| region | n/a | `string` | n/a | yes |
-| retention\_in\_days | n/a | `string` | `180` | no |
-| ssl\_certificate\_id | n/a | `string` | n/a | yes |
-| subnet\_ids | n/a | `list(any)` | n/a | yes |
-| targetgroup\_http\_name | n/a | `string` | `"artifactoryhttp"` | no |
-| targetgroup\_ssl\_name | n/a | `string` | `"artifactoryssl"` | no |
-| vpc\_id | The VPC id | `string` | n/a | yes |
-| zone\_id | n/a | `string` | n/a | yes |
+| <a name="input_allowed_cidr"></a> [allowed\_cidr](#input\_allowed\_cidr) | The allowed IP ranges | `list(any)` | n/a | yes |
+| <a name="input_cluster_arn"></a> [cluster\_arn](#input\_cluster\_arn) | The ARN of the existing ECS Cluster | `string` | n/a | yes |
+| <a name="input_common_tags"></a> [common\_tags](#input\_common\_tags) | n/a | `map(any)` | `{}` | no |
+| <a name="input_db_allocated_storage"></a> [db\_allocated\_storage](#input\_db\_allocated\_storage) | The size of the database (Gb) | `string` | `"5"` | no |
+| <a name="input_db_instance_class"></a> [db\_instance\_class](#input\_db\_instance\_class) | The database instance type | `string` | `"db.t2.small"` | no |
+| <a name="input_db_name"></a> [db\_name](#input\_db\_name) | MySQL database name | `string` | `"artdb"` | no |
+| <a name="input_db_password"></a> [db\_password](#input\_db\_password) | Database password | `string` | n/a | yes |
+| <a name="input_db_user"></a> [db\_user](#input\_db\_user) | Database user name | `string` | `"artifactory"` | no |
+| <a name="input_instance_SG"></a> [instance\_SG](#input\_instance\_SG) | n/a | `string` | n/a | yes |
+| <a name="input_instances"></a> [instances](#input\_instances) | n/a | `list(any)` | n/a | yes |
+| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | n/a | `string` | n/a | yes |
+| <a name="input_master_key"></a> [master\_key](#input\_master\_key) | n/a | `string` | n/a | yes |
+| <a name="input_outbound"></a> [outbound](#input\_outbound) | n/a | `list(any)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
+| <a name="input_record"></a> [record](#input\_record) | n/a | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | n/a | `string` | n/a | yes |
+| <a name="input_retention_in_days"></a> [retention\_in\_days](#input\_retention\_in\_days) | n/a | `string` | `180` | no |
+| <a name="input_ssl_certificate_id"></a> [ssl\_certificate\_id](#input\_ssl\_certificate\_id) | n/a | `string` | n/a | yes |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | n/a | `list(any)` | n/a | yes |
+| <a name="input_targetgroup_http_name"></a> [targetgroup\_http\_name](#input\_targetgroup\_http\_name) | n/a | `string` | `"artifactoryhttp"` | no |
+| <a name="input_targetgroup_ssl_name"></a> [targetgroup\_ssl\_name](#input\_targetgroup\_ssl\_name) | n/a | `string` | `"artifactoryssl"` | no |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC id | `string` | n/a | yes |
+| <a name="input_zone_id"></a> [zone\_id](#input\_zone\_id) | n/a | `string` | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| cluster | n/a |
+| <a name="output_cluster"></a> [cluster](#output\_cluster) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Related Projects

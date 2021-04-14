@@ -1,10 +1,4 @@
-variable "ssh_cidr" {
-  type = list(any)
-}
 
-variable "allowed_cidr" {
-  type = list(any)
-}
 variable "common_tags" {
   description = "This is to help you add tags to your cloud objects"
   type        = map(any)
