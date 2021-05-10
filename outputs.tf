@@ -3,5 +3,5 @@
 }*/
 
 output "cluster" {
-  value = data.aws_ecs_cluster.artifactory
+  value = var.cluster
 }

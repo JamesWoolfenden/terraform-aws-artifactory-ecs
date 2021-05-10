@@ -2,7 +2,7 @@ module "artifactory" {
   source             = "../../"
   common_tags        = var.common_tags
   allowed_cidr       = [module.ip.cidr]
-  cluster_arn        = data.aws_ecs_cluster.ecs-artifactory.arn
+  cluster            = aws_ecs_cluster.ecs-artifactory
   db_password        = random_string.password.result
   instance_SG        = var.instance_SG
   instances          = var.instances

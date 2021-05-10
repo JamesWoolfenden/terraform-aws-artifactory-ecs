@@ -43,9 +43,8 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "cluster_arn" {
-  type        = string
-  description = "The ARN of the existing ECS Cluster"
+variable "cluster" {
+  description = "The existing ECS Cluster"
 }
 
 variable "allowed_cidr" {
@@ -68,6 +67,7 @@ variable "master_key" {
 variable "instance_SG" {
   type = string
 }
+
 variable "region" {
   type = string
 }

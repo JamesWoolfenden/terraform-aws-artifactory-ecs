@@ -5,7 +5,7 @@ resource "aws_ecs_service" "artifactory" {
   desired_count                      = 1
   enable_ecs_managed_tags            = true
   health_check_grace_period_seconds  = 0
-  cluster                            = var.cluster_arn
+  cluster                            = var.cluster.arn
   launch_type                        = "EC2"
   scheduling_strategy                = "REPLICA"
   tags                               = var.common_tags
