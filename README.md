@@ -58,6 +58,27 @@ module "artifactory" {
 
 The Latest version supports Terraform v0.14.
 
+## Costs
+
+```text
+Monthly cost estimate
+
+Project: .
+
+ Name                                                     Monthly Qty  Unit         Monthly Cost
+
+ module.artifactory.aws_cloudwatch_log_group.artifactory
+ ├─ Data ingested                                         Cost depends on usage: $0.60 per GB
+ ├─ Archival Storage                                      Cost depends on usage: $0.03 per GB
+ └─ Insights queries data scanned                         Cost depends on usage: $0.0059 per GB
+
+ module.artifactory.aws_elb.artifactory
+ ├─ Classic load balancer                                         730  hours              $21.46
+ └─ Data processed                                        Cost depends on usage: $0.0084 per GB
+
+ PROJECT TOTAL                                                                            $21.46
+```
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
