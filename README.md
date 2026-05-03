@@ -167,15 +167,20 @@ resource "aws_iam_policy" "terraform_pike" {
                 "ec2:AuthorizeSecurityGroupIngress",
                 "ec2:CreateSecurityGroup",
                 "ec2:CreateTags",
+                "ec2:DeleteNetworkInterface",
                 "ec2:DeleteSecurityGroup",
                 "ec2:DeleteTags",
                 "ec2:DescribeAccountAttributes",
                 "ec2:DescribeNetworkInterfaces",
+                "ec2:DescribeSecurityGroupRules",
                 "ec2:DescribeSecurityGroups",
+                "ec2:DetachNetworkInterface",
                 "ec2:RevokeSecurityGroupEgress",
                 "ec2:RevokeSecurityGroupIngress"
             ],
-            "Resource": "*"
+            "Resource": [
+                "*"
+            ]
         },
         {
             "Sid": "VisualEditor1",
@@ -186,12 +191,15 @@ resource "aws_iam_policy" "terraform_pike" {
                 "ecs:DeregisterTaskDefinition",
                 "ecs:DescribeServices",
                 "ecs:DescribeTaskDefinition",
+                "ecs:ListTagsForResource",
                 "ecs:RegisterTaskDefinition",
                 "ecs:TagResource",
                 "ecs:UntagResource",
                 "ecs:UpdateService"
             ],
-            "Resource": "*"
+            "Resource": [
+                "*"
+            ]
         },
         {
             "Sid": "VisualEditor2",
@@ -206,9 +214,12 @@ resource "aws_iam_policy" "terraform_pike" {
                 "elasticloadbalancing:DescribeLoadBalancers",
                 "elasticloadbalancing:DescribeTags",
                 "elasticloadbalancing:ModifyLoadBalancerAttributes",
-                "elasticloadbalancing:RemoveTags"
+                "elasticloadbalancing:RemoveTags",
+                "elasticloadbalancing:SetSecurityGroups"
             ],
-            "Resource": "*"
+            "Resource": [
+                "*"
+            ]
         },
         {
             "Sid": "VisualEditor3",
@@ -226,9 +237,12 @@ resource "aws_iam_policy" "terraform_pike" {
                 "iam:ListRolePolicies",
                 "iam:PassRole",
                 "iam:PutRolePolicy",
-                "iam:TagRole"
+                "iam:TagRole",
+                "iam:UntagRole"
             ],
-            "Resource": "*"
+            "Resource": [
+                "*"
+            ]
         },
         {
             "Sid": "VisualEditor4",
@@ -240,12 +254,15 @@ resource "aws_iam_policy" "terraform_pike" {
                 "logs:DeleteRetentionPolicy",
                 "logs:DescribeLogGroups",
                 "logs:DisassociateKmsKey",
+                "logs:ListTagsForResource",
                 "logs:ListTagsLogGroup",
                 "logs:PutRetentionPolicy",
                 "logs:TagLogGroup",
                 "logs:UntagLogGroup"
             ],
-            "Resource": "*"
+            "Resource": [
+                "*"
+            ]
         },
         {
             "Sid": "VisualEditor5",
@@ -256,7 +273,9 @@ resource "aws_iam_policy" "terraform_pike" {
                 "route53:GetHostedZone",
                 "route53:ListResourceRecordSets"
             ],
-            "Resource": "*"
+            "Resource": [
+                "*"
+            ]
         }
     ]
 })

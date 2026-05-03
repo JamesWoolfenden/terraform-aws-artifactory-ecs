@@ -97,7 +97,7 @@ variable "instances" {
 
 variable "retention_in_days" {
   type    = string
-  default = 180
+  default = 365
 }
 
 variable "kms_key_id" {

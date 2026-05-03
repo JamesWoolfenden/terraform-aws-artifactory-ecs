@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "artifactory" {
     "EC2",
   ]
 
-  task_role_arn = aws_iam_role.ecs_artifactory.arn
+  task_role_arn = aws_iam_role.ecs_task.arn
 
   lifecycle {
     ignore_changes = [tags]

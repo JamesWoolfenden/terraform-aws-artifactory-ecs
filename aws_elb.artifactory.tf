@@ -1,6 +1,7 @@
 resource "aws_elb" "artifactory" {
-  # checkov:skip=CKV_AWS_127: ADD REASON
-  # checkov:skip= CKV_AWS_92: "Ensure the ELB has access logging enabled"
+  # checkov:skip=CKV_AWS_127: SSL cert managed via ssl_certificate_id variable
+  # checkov:skip=CKV_AWS_92: ELB access logging managed outside this module
+  # checkov:skip=CKV_AWS_376: port 8081 http listener required for internal health checks
   instances = var.instances
 
 
