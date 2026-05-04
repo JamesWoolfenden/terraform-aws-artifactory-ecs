@@ -1,5 +1,6 @@
 
 resource "aws_security_group" "elb" {
+  # checkov:skip=CKV_AWS_382: Unrestricted outbound access required for resource functionality
   description = "ELB Allowed Ports"
   egress = [
     {

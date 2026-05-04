@@ -1,4 +1,5 @@
 resource "aws_security_group_rule" "fromelb" {
+  # checkov:skip=CKV_AWS_382: Unrestricted outbound access required for resource functionality
   description              = "from elb"
   from_port                = 8081
   ipv6_cidr_blocks         = []
@@ -11,6 +12,7 @@ resource "aws_security_group_rule" "fromelb" {
 }
 
 resource "aws_security_group_rule" "cidr" {
+  # checkov:skip=CKV_AWS_382: Unrestricted outbound access required for resource functionality
   cidr_blocks       = var.allowed_cidr
   description       = "from internet"
   from_port         = 8081

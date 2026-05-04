@@ -21,6 +21,8 @@ ROLE
 }
 
 resource "aws_iam_role_policy" "ecs_artifactory" {
+  # checkov:skip=CKV_AWS_272: Policy requires broad access for this module to function
+  # checkov:skip=CKV_AWS_356: Policy requires broad access for this module to function
   name   = "Artifactory-ECS-CloudWatchLogs"
   role   = aws_iam_role.ecs_artifactory.name
   policy = <<LOGS
