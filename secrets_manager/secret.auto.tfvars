@@ -1,4 +1,4 @@
-Licence = {
+licence = {
   ArtifactoryLicense1 = "b"
   ArtifactoryLicense2 = "b"
   ArtifactoryLicense3 = "b"

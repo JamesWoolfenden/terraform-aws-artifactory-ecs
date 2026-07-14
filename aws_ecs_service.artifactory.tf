@@ -8,7 +8,6 @@ resource "aws_ecs_service" "artifactory" {
   cluster                            = var.cluster.arn
   launch_type                        = "EC2"
   scheduling_strategy                = "REPLICA"
-  tags                               = var.common_tags
   task_definition                    = "${aws_ecs_task_definition.artifactory.family}:${aws_ecs_task_definition.artifactory.revision}"
   wait_for_steady_state              = false
   iam_role                           = "ecsServiceRole"
@@ -36,8 +35,4 @@ resource "aws_ecs_service" "artifactory" {
   lifecycle {
     ignore_changes = [tags]
   }
-}
-
-data "aws_iam_role" "ecs_service" {
-  name = "AWSServiceRoleForECS"
 }

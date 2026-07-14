@@ -1,0 +1,64 @@
+suppressions:
+  - policy_id: HLD_TF_029
+    resource_id: workspace
+    reason: >-
+      This module is a single-purpose Artifactory-on-ECS deployment
+      (ELB, ECS service/task, IAM roles, security groups, CloudWatch log
+      group) — the 106-permission workspace footprint reflects that scope
+      directly, not accidental sprawl. Splitting it into smaller workspaces
+      would fragment one cohesive deployable unit rather than reduce blast
+      radius.
+    approved_by: james.woolfenden@gmail.com
+
+  - policy_id: HLD_TF_030
+    resource_id: workspace
+    reason: >-
+      Same single-purpose module as HLD_TF_029: the 6 AWS services touched
+      (elb, ecs, iam, ec2 security groups, logs, route53) are all required
+      to deploy Artifactory behind a load balancer with DNS — there isn't a
+      smaller service-domain split that keeps this as one deployable unit.
+    approved_by: james.woolfenden@gmail.com
+  - policy_id: HLD_TF_005
+    resource_id: workspace
+    reason: >-
+      The module is designed to be used seperately from other modules, and the 6 AWS services it touches are all required to deploy Artifactory behind a load balancer with DNS. There isn't a smaller service-domain split that keeps this as one deployable unit.
+    approved_by: james.woolfenden@gmail.com
+
+  - policy_id: HLD_CI_017
+    resource_id: gha_job.pull_request.yml.pr
+    reason: >-
+      JamesWoolfenden/.github is an internal reference — same owner/org as
+      this repo, not a third-party dependency. The mutable-ref supply-chain
+      risk this check targets (an untrusted party silently repointing the
+      ref to malicious code) doesn't apply the same way to a self-owned
+      reusable workflow.
+    approved_by: james.woolfenden@gmail.com
+
+  - policy_id: HLD_CI_017
+    resource_id: gha_job.verify.yml.verify
+    reason: >-
+      Same rationale as pull_request.yml.pr: JamesWoolfenden/.github is an
+      internal reference, not a third-party dependency.
+    approved_by: james.woolfenden@gmail.com
+
+  - policy_id: HLD_TF_073
+    resource_id: workspace
+    reason: >-
+      Same single-purpose module as HLD_TF_029/030: the S3 log bucket
+      (aws_s3_bucket + encryption, versioning, logging, public-access-block,
+      lifecycle, and policy resources) exists solely to give the ELB a
+      compliant access-logs destination — it's a required companion to the
+      ELB, not a separate concern. The 20-type count reflects doing that
+      correctly, not scope creep.
+    approved_by: james.woolfenden@gmail.com
+
+  - policy_id: HLD_AWS_229
+    resource_id: aws_elb.artifactory
+    reason: >-
+      Classic ELB is legacy but still fully supported by AWS — no
+      end-of-life announced, existing and new CLBs continue to operate
+      normally. This module's ECS EC2 launch type registers instances
+      directly with the load balancer rather than via a target group, so
+      migrating to ALB/NLB is a real architectural redesign, not a
+      drop-in swap. Tracked as known tech debt, not rushed.
+    approved_by: james.woolfenden@gmail.com

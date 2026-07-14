@@ -1,7 +1,5 @@
-/*output "db" {
-  value = module.artifactory.db
-}*/
 
 output "cluster" {
-  value = module.artifactory.cluster
+  value       = aws_ecs_cluster.ecs_artifactory.name
+  description = "The name of the cluster"
 }

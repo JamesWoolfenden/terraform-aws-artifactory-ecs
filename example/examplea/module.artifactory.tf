@@ -1,11 +1,10 @@
+# holden:ignore:HLD_TF_026
 module "artifactory" {
   source             = "../../"
-  common_tags        = var.common_tags
   allowed_cidr       = [module.ip.cidr]
-  cluster            = aws_ecs_cluster.ecs-artifactory
-  db_password        = random_string.password.result
-  instance_SG        = var.instance_SG
+  cluster            = aws_ecs_cluster.ecs_artifactory
   instances          = var.instances
+  instance_sg        = var.instance_sg
   kms_key_id         = var.kms_key_id
   master_key         = var.master_key
   record             = var.record

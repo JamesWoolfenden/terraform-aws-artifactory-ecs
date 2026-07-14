@@ -1,0 +1,108 @@
+{
+  "findings": [
+    {
+      "confidence": "high",
+      "explanation": "master_key = \"3f135dcd508bb4154718f5b8fa14fa77d46c08acd5dc036b2a19e443318eab48\" is exactly 64 hex chars (32 bytes) \u2014 the precise shape of a real Artifactory ARTIFACTORY_MASTER_KEY, not a placeholder (compare secrets_manager/secret.auto.tfvars in the same repo, where every field is literally \"b\"). It sits alongside what read as real AWS identifiers: vpc-0bf7dacf63f99adc3, subnet-069e041ace652987c, sg-0ed3f3a246ecb2eb5, ACM cert arn:aws:acm:eu-west-2:680235478471:..., Route53 zone Z0613304D03LG1SU5BI, and domain artifact.freebeer.site. The variable is declared sensitive = true (variables.tf:39-47), which only masks CLI/plan output \u2014 it does nothing to keep the literal out of git history. Holden has no generic entropy/secret-literal scanner for arbitrary .tfvars assignments (its only credential rule, HLD_AWS/CI 'Provider blocks must not contain hardcoded credentials', is scoped to provider blocks, not variable values), so this never surfaces as a deterministic finding. Blast radius: anyone with read access to this repo (or its git history, forks, or CI logs) can join a rogue Artifactory node or decrypt config secrets using this key, and can enumerate the target AWS account's networking layout.",
+      "file": "example/examplea/examplea.auto.tfvars",
+      "fixable": false,
+      "id": "HOLDEN_AI_001",
+      "line": 4,
+      "principle": "data-protection",
+      "related_resources": [
+        "variables.tf#master_key",
+        "aws_ecs_task_definition.artifactory",
+        "example/examplea/module.artifactory.tf"
+      ],
+      "remediation": "Treat the key as compromised: rotate/regenerate the Artifactory master key in the real environment, replace the committed value with a placeholder (or better, source it from Secrets Manager/SSM as in finding HOLDEN_AI_002), and scrub it from git history (git filter-repo / BFG) since simply editing the current file leaves it recoverable from history.",
+      "resource": "var.master_key (example/examplea)",
+      "severity": "CRITICAL",
+      "title": "Live-looking Artifactory master key and real AWS resource identifiers committed to git"
+    },
+    {
+      "confidence": "high",
+      "explanation": "container_definitions is rendered via templatefile() with var.master_key spliced directly into task-definitions/artifactory.json's \"environment\" block (ARTIFACTORY_MASTER_KEY, lines 6-11), not the ECS \"secrets\" block. The enterprise variant (task-definitions/artifactory_enterprise.json:6-31) does the same for DB_PASSWORD, DB_USER and DB_URL. Values in \"environment\" are stored in cleartext in the registered task definition and are readable by anyone with ecs:DescribeTaskDefinition in the account, and appear in CloudTrail request/response payloads for RegisterTaskDefinition. Holden's aws_ecs_task_definition coverage (privileged, read-only-root-fs, host networking, PID/IPC namespace) never looks inside container_definitions because it's an opaque JSON string produced by a templatefile() call across two files \u2014 the engine has no template evaluation, so it can't see into it. Notably, this repo already contains an unused secrets_manager/ Terraform root (aws_secretsmanager_secret.Artifactory) that isn't wired into this module at all \u2014 the plumbing to do this correctly already exists next door.",
+      "file": "aws_ecs_task_definition.artifactory.tf",
+      "fixable": false,
+      "id": "HOLDEN_AI_002",
+      "line": 2,
+      "principle": "data-protection",
+      "related_resources": [
+        "task-definitions/artifactory.json",
+        "task-definitions/artifactory_enterprise.json",
+        "secrets_manager/aws_secrets.tf"
+      ],
+      "remediation": "Store master_key (and db_password) in Secrets Manager or SSM SecureString, grant the task execution role ssm:GetParameters/secretsmanager:GetSecretValue on that ARN, and reference it via the ECS task definition's \"secrets\" array (secrets = [{ name = \"ARTIFACTORY_MASTER_KEY\", valueFrom = aws_secretsmanager_secret.master_key.arn }]) instead of \"environment\".",
+      "resource": "aws_ecs_task_definition.artifactory",
+      "severity": "HIGH",
+      "title": "Artifactory master key (and DB password in the enterprise variant) injected as plaintext ECS environment variables instead of Secrets Manager"
+    },
+    {
+      "confidence": "medium",
+      "explanation": "aws_elb.artifactory (internal = false) has two listeners: lb_port 8081 HTTP -> instance_port 8081 HTTP with no TLS at all (aws_elb.artifactory.tf:8-13), alongside the intended lb_port 443 HTTPS -> instance_port 8082 listener. The security group backing the ELB (aws_security_group.elb.tf:19-30) opens 8081-8082 to var.allowed_cidr, so that plaintext 8081 listener is reachable by anyone allowed_cidr admits \u2014 not just health checks (the comment on the ELB resource, 'port 8081 http listener required for internal health checks', is misleading: the health_check block already targets HTTP:8081 on the instance directly and needs no LB-level listener to do that). Separately, aws_security_group_rule.cidr (aws_security_group.rule.artifactory.tf:14-24) opens the identical port range 8081-8082 from the identical var.allowed_cidr straight onto var.instance_sg, bypassing the ELB entirely. Both paths let a client in allowed_cidr reach Artifactory's UI/API in cleartext (credentials, session cookies, API tokens) even though the module clearly intends HTTPS termination at the ELB. No holden policy covers aws_elb at all (zero entries in coverage_by_type), because HLD_AWS_154's HTTP-listener check only matches aws_lb_listener/aws_alb_listener (the ALB/NLB resource), not the classic ELB's inline listener blocks.",
+      "file": "aws_elb.artifactory.tf",
+      "fixable": false,
+      "id": "HOLDEN_AI_003",
+      "line": 8,
+      "principle": "network-security",
+      "related_resources": [
+        "aws_security_group.rule.artifactory.tf#aws_security_group_rule.cidr",
+        "aws_security_group.elb.tf"
+      ],
+      "remediation": "Remove the lb_port 8081 HTTP listener from aws_elb.artifactory (health checks don't need it), and change aws_security_group_rule.cidr to source from the ELB's security group (source_security_group_id = aws_security_group.elb.id) instead of var.allowed_cidr, so the only path to the instances is through the ELB's HTTPS listener.",
+      "resource": "aws_elb.artifactory",
+      "severity": "HIGH",
+      "title": "Artifactory's raw HTTP ports are reachable from the internet with no TLS, via two separate paths that both bypass the module's own HTTPS listener"
+    },
+    {
+      "confidence": "high",
+      "explanation": "Both workflows call a job-level reusable workflow (uses: JamesWoolfenden/.github/.github/workflows/terraform-verify.yml@main and .../terraform-pr.yml@main) pinned to the mutable main branch rather than a commit SHA. verify.yml additionally grants permissions: id-token: write, contents: write to that job, so any push to JamesWoolfenden/.github's main branch immediately and silently changes what code runs with OIDC cloud-auth and repo-write credentials on every repo that consumes it, including this one. Holden's existing SHA-pinning check (HLD_CI_004) only evaluates the gha_step resource type (step-level uses:), not gha_job (job-level reusable-workflow uses:), so this class of reference is structurally invisible to it even though the repo already runs ghat to pin step-level actions (see recent commit 'chore: update ghat hook to v0.1.31').",
+      "file": ".github/workflows/verify.yml",
+      "fixable": false,
+      "id": "HOLDEN_AI_004",
+      "line": 19,
+      "principle": "supply-chain",
+      "related_resources": [
+        ".github/workflows/pull_request.yml"
+      ],
+      "remediation": "Pin both jobs' uses: to a commit SHA of JamesWoolfenden/.github (annotated with the tag/branch as a comment), the same way ghat pins individual action steps, and re-pin deliberately when you want to pick up changes.",
+      "resource": "gha_job.verify (.github/workflows/verify.yml)",
+      "severity": "MEDIUM",
+      "title": "CI reusable workflows are pinned only to the mutable @main branch, at job level, with id-token/contents write permissions"
+    },
+    {
+      "confidence": "medium",
+      "explanation": "iam_role = \"ecsServiceRole\" is a bare string literal, not a reference to any aws_iam_role in this configuration (the module only defines ecs_artifactory and ecs_task). This is the legacy classic-ELB service role that AWS's old console flow used to create by default; Terraform will fail at apply time if it doesn't already exist in the target account, and because it's referenced by name rather than managed here, its actual permissions are entirely outside this module's (and holden's) visibility \u2014 no IaC in this repo shows what that role can do.",
+      "file": "aws_ecs_service.artifactory.tf",
+      "fixable": false,
+      "id": "HOLDEN_AI_005",
+      "line": 13,
+      "principle": "identity-and-access",
+      "related_resources": [
+        "aws_iam_role.ecs_artifactory.tf",
+        "aws_iam_role.ecs_task.tf"
+      ],
+      "remediation": "Either create and manage this role as a Terraform resource in the module (least-privilege trust policy scoped to ecs.amazonaws.com, ELB registration permissions only), or document in the README that the caller must pre-provision an IAM role named ecsServiceRole with specific permissions before applying.",
+      "resource": "aws_ecs_service.artifactory",
+      "severity": "LOW",
+      "title": "ECS service load-balancer registration uses an IAM role that this module never defines or manages"
+    }
+  ],
+  "suggested_policies": [
+    {
+      "rationale": "coverage_by_type has zero entries for aws_elb \u2014 holden's only HTTP-listener check (HLD_AWS_154) matches aws_lb_listener/aws_alb_listener (ALB/NLB), which are separate resources from classic ELB's inline listener blocks. This repo's own aws_elb.artifactory resource (finding HOLDEN_AI_003) demonstrates the gap concretely: an internet-facing classic ELB with a plaintext HTTP listener is invisible to the existing rule set. The check is a straightforward attribute-path condition over the listener block list, same shape as the existing security-group ingress/egress list checks.",
+      "yaml": "id: HLD_PROPOSED_001\nname: Internet-facing classic ELBs must not have a plaintext HTTP listener\nprinciple: encryption\nseverity: HIGH\nrationale: |\n  An aws_elb with internal = false is reachable from the internet. A listener\n  block with lb_protocol = \"HTTP\" (or \"http\") accepts that internet traffic\n  without TLS, transmitting request and response data \u2014 including\n  authentication headers, session cookies, and POST bodies \u2014 in cleartext.\n  Anyone on the network path between the client and the load balancer can\n  observe or modify the traffic undetected. This is the classic-ELB\n  equivalent of an ALB HTTP listener that forwards instead of redirecting\n  (HLD_AWS_154), but classic ELB expresses listeners as inline blocks on the\n  aws_elb resource itself rather than as a separate aws_lb_listener resource,\n  so the existing check does not evaluate it.\nremediation: |\n  Remove the plaintext HTTP listener, or change it to terminate TLS:\n\n    resource \"aws_elb\" \"example\" {\n      internal = false\n\n      listener {\n        instance_port      = 8081\n        instance_protocol  = \"http\"\n        lb_port             = 443\n        lb_protocol         = \"https\"\n        ssl_certificate_id  = var.ssl_certificate_id\n      }\n    }\nresources:\n  aws_elb:\n    filter:\n      path: internal\n      equals: false\n    path: listener\n    not_any:\n      path: lb_protocol\n      matches: \"(?i)^http$\"\n"
+    },
+    {
+      "dsl_extension_note": "Confirmed gha_job already exposes a computed is_reusable boolean (used as a filter in job-timeout.yaml), and gha_step already exposes is_sha_pinned/ref for step-level uses: \u2014 but it could not be confirmed from the schema/catalog alone whether gha_job currently exposes an equivalent is_sha_pinned (or raw ref) attribute for its own uses: field. If it doesn't yet exist, the primitive needed is: parse the job-level uses: string the same way gha_step.uses: is parsed (owner/repo/path@ref), and expose is_sha_pinned (true when ref is a 40-char hex SHA) and ref as gha_job attributes, mirroring the existing gha_step fields exactly.",
+      "rationale": "coverage_by_type shows gha_job only has HLD_CI_006 (timeout), HLD_CI_010 (per-job permissions) and HLD_CI_016 (id-token consumption) \u2014 no policy checks whether a job-level reusable-workflow uses: reference is pinned to a commit SHA. The existing SHA-pinning policy (HLD_CI_004) is scoped strictly to gha_step. This repo's own verify.yml/pull_request.yml (finding HOLDEN_AI_004) call reusable workflows at job level pinned only to @main with id-token/contents write permissions, which is invisible to HLD_CI_004 purely because of the resource-type scoping, not because the underlying risk (mutable ref supply-chain compromise) differs from the step-level case.",
+      "requires_dsl_extension": true,
+      "yaml": "id: HLD_PROPOSED_002\nname: GitHub Actions job-level reusable workflow calls should be pinned to a commit SHA\nprinciple: supply-chain\nseverity: HIGH\nrationale: |\n  A job that calls a reusable workflow (jobs.<id>.uses:) pinned to a mutable\n  branch or tag ref, rather than a commit SHA, can be silently repointed to\n  different \u2014 potentially malicious \u2014 code at any time by whoever controls\n  that ref. This is the same risk HLD_CI_004 already addresses for step-level\n  uses:, but jobs.<id>.uses: is a structurally distinct reference that the\n  existing gha_step-scoped check does not evaluate. The risk is often larger\n  at job level, since reusable workflows are commonly granted broad\n  permissions (id-token: write, contents: write) to perform cloud\n  authentication or releases on behalf of every caller.\nremediation: |\n  Pin the job-level uses: to a full 40-char commit SHA, annotated with the\n  resolved tag/branch as a comment:\n\n    jobs:\n      verify:\n        uses: org/repo/.github/workflows/terraform-verify.yml@11bd71901bbe5b1630ceea73d27597364c9af683 # main\nresources:\n  gha_job:\n    filter:\n      path: is_reusable\n      equals: true\n    path: is_sha_pinned\n    equals: true\n"
+    },
+    {
+      "dsl_extension_note": "container_definitions is a string attribute holding a JSON document (frequently produced by a templatefile() call to a separate file, as in this repo). The DSL needs a way to (a) resolve templatefile()/file() references to read the target file's content when the string attribute isn't a literal, and (b) a json_decode path modifier that parses a string attribute as JSON so subsequent path segments (e.g. iterating an 'environment' array and reading each element's 'name'/'value') can be evaluated with the normal leaf operators. Neither primitive exists today; the YAML above sketches the shape but is not runnable until both land.",
+      "rationale": "aws_ecs_task_definition coverage is limited to privileged/read-only-root-fs/host-networking/PID/IPC namespace \u2014 nothing inspects container_definitions for secrets placed in plaintext environment entries instead of the ECS secrets mechanism. This repo's own task-definitions/artifactory.json and artifactory_enterprise.json (finding HOLDEN_AI_002) put ARTIFACTORY_MASTER_KEY and DB_PASSWORD directly in \"environment\". This can't be expressed as a plain attribute-path condition today because container_definitions is an opaque JSON string (often produced by templatefile() across a separate file), not a structured HCL block the DSL can walk.",
+      "requires_dsl_extension": true,
+      "yaml": "id: HLD_PROPOSED_003\nname: ECS task definitions must not place secret-shaped variables in plaintext environment\nprinciple: data-protection\nseverity: HIGH\nrationale: |\n  Values placed in an ECS container definition's \"environment\" array are\n  stored in cleartext in the registered task definition, readable by anyone\n  with ecs:DescribeTaskDefinition in the account and visible in CloudTrail\n  request/response payloads. Values that are clearly secrets by name (KEY,\n  PASSWORD, SECRET, TOKEN, CREDENTIAL) belong in the \"secrets\" array instead,\n  which resolves them from Secrets Manager or SSM Parameter Store at\n  container start and never stores the plaintext value in the task\n  definition itself.\nremediation: |\n  Move secret-shaped environment entries to the \"secrets\" array, sourced from\n  Secrets Manager or SSM SecureString:\n\n    \"secrets\": [\n      { \"name\": \"ARTIFACTORY_MASTER_KEY\", \"valueFrom\": \"arn:aws:secretsmanager:...:secret:master-key\" }\n    ]\nresources:\n  aws_ecs_task_definition:\n    path: container_definitions\n    json_decode: true\n    all_in: environment\n    not_any:\n      path: name\n      matches: \"(?i)(KEY|PASSWORD|SECRET|TOKEN|CREDENTIAL)\"\n"
+    }
+  ]
+}

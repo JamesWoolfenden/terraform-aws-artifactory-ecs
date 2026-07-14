@@ -15,7 +15,8 @@ resource "aws_iam_role" "ecs_task" {
 }
 ROLE
 
-  name = "ArtifactoryEcsTaskRole"
-  path = "/"
-  tags = var.common_tags
+  name                 = "ArtifactoryEcsTaskRole"
+  path                 = "/"
+  max_session_duration = 43200
+
 }

@@ -15,16 +15,12 @@ resource "aws_iam_role" "ecs_artifactory" {
 }
 ROLE
 
-  name = "ArtifactoryEcsTaskExecutionRole"
-  path = "/"
-  tags = var.common_tags
+  name                 = "ArtifactoryEcsTaskExecutionRole"
+  path                 = "/"
+  max_session_duration = 43200
 }
 
 resource "aws_iam_role_policy" "ecs_artifactory" {
-  # checkov:skip=CKV_AWS_290: Policy requires broad access for this module to function
-  # checkov:skip=CKV_AWS_355: Policy requires broad access for this module to function
-  # checkov:skip=CKV_AWS_272: Policy requires broad access for this module to function
-  # checkov:skip=CKV_AWS_356: Policy requires broad access for this module to function
   name   = "Artifactory-ECS-CloudWatchLogs"
   role   = aws_iam_role.ecs_artifactory.name
   policy = <<LOGS

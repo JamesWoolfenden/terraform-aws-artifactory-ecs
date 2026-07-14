@@ -17,5 +17,4 @@ resource "aws_ecs_task_definition" "artifactory" {
   lifecycle {
     ignore_changes = [tags]
   }
-  tags = var.common_tags
 }

@@ -1,9 +1,10 @@
+# holden:ignore:HLD_TF_004
 terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "6.43.0"
+      version = "6.54.0"
     }
   }
-  required_version = ">= 0.13"
+  required_version = ">= 1.5.0"
 }

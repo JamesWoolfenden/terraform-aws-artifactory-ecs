@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(SCRATCH=\"/c/Users/jim_w/AppData/Local/Temp/claude/e--Code-modules-aws-terraform-aws-artifactory-ecs/b546d05b-a62d-4941-a02d-fc110cf67006/scratchpad\" *)",
+      "Read(//c/Users/jim_w/AppData/Local/Temp/claude/e--Code-modules-aws-terraform-aws-artifactory-ecs/b546d05b-a62d-4941-a02d-fc110cf67006/scratchpad/**)",
+      "Read(//c/Users/jim_w/AppData/Local/Temp/claude/e--Code-modules-aws-terraform-aws-artifactory-ecs/b546d05b-a62d-4941-a02d-fc110cf67006/scratchpad/holden/**)",
+      "Bash(gh pr create --title 'Add HLD_AWS_237: IAM principals must not be granted IAMFullAccess' --body ' *)",
+      "Bash(go install *)",
+      "PowerShell(Stop-Process -Id 109728,59420 -Force -Confirm:$false)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name = 'holden.exe'\")",
+      "Bash(holden --help)",
+      "Bash(python -m checkov.main -d example/examplea --external-checks-dir checkov --download-external-modules true --compact)"
+    ]
+  }
+}

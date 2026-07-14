@@ -39,7 +39,6 @@ Follow examplea as your guide or add _module.artifactory.tf_ to your own Terrafo
 module "artifactory" {
   source             = "JamesWoolfenden/artifactory-ecs/aws"
   version            = "0.0.2"
-  common_tags        = var.common_tags
   subnet_ids         = var.subnet_ids
   vpc_id             = var.vpc_id
   cluster_arn        = data.aws_ecs_cluster.ecs-artifactory.arn
@@ -105,43 +104,40 @@ No modules.
 | [aws_iam_role_policy.ecs_artifactory](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.artifactory](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_route53_record.www](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
+| [aws_s3_bucket.elb_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
+| [aws_s3_bucket_lifecycle_configuration.elb_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_lifecycle_configuration) | resource |
+| [aws_s3_bucket_logging.elb_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_logging) | resource |
+| [aws_s3_bucket_policy.elb_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) | resource |
+| [aws_s3_bucket_public_access_block.elb_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
+| [aws_s3_bucket_server_side_encryption_configuration.elb_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_server_side_encryption_configuration) | resource |
+| [aws_s3_bucket_versioning.elb_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_versioning) | resource |
 | [aws_security_group.elb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group_rule.cidr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.fromelb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
-| [aws_iam_role.ecs_service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_role) | data source |
+| [aws_elb_service_account.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/elb_service_account) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_allowed_cidr"></a> [allowed\_cidr](#input\_allowed\_cidr) | The allowed IP ranges | `list(any)` | n/a | yes |
-| <a name="input_cluster"></a> [cluster](#input\_cluster) | The existing ECS Cluster | `any` | n/a | yes |
-| <a name="input_common_tags"></a> [common\_tags](#input\_common\_tags) | n/a | `map(any)` | `{}` | no |
-| <a name="input_db_allocated_storage"></a> [db\_allocated\_storage](#input\_db\_allocated\_storage) | The size of the database (Gb) | `string` | `"5"` | no |
-| <a name="input_db_instance_class"></a> [db\_instance\_class](#input\_db\_instance\_class) | The database instance type | `string` | `"db.t2.small"` | no |
-| <a name="input_db_name"></a> [db\_name](#input\_db\_name) | MySQL database name | `string` | `"artdb"` | no |
-| <a name="input_db_password"></a> [db\_password](#input\_db\_password) | Database password | `string` | n/a | yes |
-| <a name="input_db_user"></a> [db\_user](#input\_db\_user) | Database user name | `string` | `"artifactory"` | no |
-| <a name="input_instance_SG"></a> [instance\_SG](#input\_instance\_SG) | n/a | `string` | n/a | yes |
-| <a name="input_instances"></a> [instances](#input\_instances) | n/a | `list(any)` | n/a | yes |
-| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | n/a | `string` | n/a | yes |
-| <a name="input_master_key"></a> [master\_key](#input\_master\_key) | n/a | `string` | n/a | yes |
-| <a name="input_outbound"></a> [outbound](#input\_outbound) | n/a | `list(any)` | <pre>[<br/>  "0.0.0.0/0"<br/>]</pre> | no |
-| <a name="input_record"></a> [record](#input\_record) | n/a | `string` | n/a | yes |
-| <a name="input_region"></a> [region](#input\_region) | n/a | `string` | n/a | yes |
-| <a name="input_retention_in_days"></a> [retention\_in\_days](#input\_retention\_in\_days) | n/a | `string` | `365` | no |
-| <a name="input_ssl_certificate_id"></a> [ssl\_certificate\_id](#input\_ssl\_certificate\_id) | n/a | `string` | n/a | yes |
-| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | n/a | `list(any)` | n/a | yes |
-| <a name="input_targetgroup_http_name"></a> [targetgroup\_http\_name](#input\_targetgroup\_http\_name) | n/a | `string` | `"artifactoryhttp"` | no |
-| <a name="input_targetgroup_ssl_name"></a> [targetgroup\_ssl\_name](#input\_targetgroup\_ssl\_name) | n/a | `string` | `"artifactoryssl"` | no |
+| <a name="input_allowed_cidr"></a> [allowed\_cidr](#input\_allowed\_cidr) | The allowed IP ranges | `list(string)` | n/a | yes |
+| <a name="input_cluster"></a> [cluster](#input\_cluster) | The existing ECS Cluster | <pre>object({<br/>    name = string<br/>    arn  = string<br/>  })</pre> | n/a | yes |
+| <a name="input_instance_sg"></a> [instance\_sg](#input\_instance\_sg) | Security group ID for the instances. | `string` | n/a | yes |
+| <a name="input_instances"></a> [instances](#input\_instances) | List of instance definitions. | `list(any)` | n/a | yes |
+| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | The ID of the KMS key for encryption. | `string` | n/a | yes |
+| <a name="input_master_key"></a> [master\_key](#input\_master\_key) | Master key used for the deployment. | `string` | n/a | yes |
+| <a name="input_outbound"></a> [outbound](#input\_outbound) | List of outbound CIDR blocks for the security group. | `list(any)` | <pre>[<br/>  "0.0.0.0/0"<br/>]</pre> | no |
+| <a name="input_record"></a> [record](#input\_record) | The DNS record for the domain | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | AWS region where resources will be created. | `string` | n/a | yes |
+| <a name="input_retention_in_days"></a> [retention\_in\_days](#input\_retention\_in\_days) | The number of days to retain the logs in CloudWatch. | `number` | `365` | no |
+| <a name="input_ssl_certificate_id"></a> [ssl\_certificate\_id](#input\_ssl\_certificate\_id) | The ACM certificate ARN for HTTPS listener | `string` | n/a | yes |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs. | `list(any)` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC id | `string` | n/a | yes |
-| <a name="input_zone_id"></a> [zone\_id](#input\_zone\_id) | n/a | `string` | n/a | yes |
+| <a name="input_zone_id"></a> [zone\_id](#input\_zone\_id) | The Route53 zone ID for the domain | `string` | n/a | yes |
 
 ## Outputs
 
-| Name | Description |
-| ---- | ----------- |
-| <a name="output_cluster"></a> [cluster](#output\_cluster) | n/a |
+No outputs.
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Policy
@@ -150,6 +146,7 @@ No modules.
 The Terraform resource required is:
 
 ```golang
+# apply role — full permissions for terraform apply
 resource "aws_iam_policy" "terraform_pike" {
   name_prefix = "terraform_pike"
   path        = "/"
@@ -165,10 +162,8 @@ resource "aws_iam_policy" "terraform_pike" {
                 "ec2:AuthorizeSecurityGroupEgress",
                 "ec2:AuthorizeSecurityGroupIngress",
                 "ec2:CreateSecurityGroup",
-                "ec2:CreateTags",
                 "ec2:DeleteNetworkInterface",
                 "ec2:DeleteSecurityGroup",
-                "ec2:DeleteTags",
                 "ec2:DescribeAccountAttributes",
                 "ec2:DescribeNetworkInterfaces",
                 "ec2:DescribeSecurityGroupRules",
@@ -192,8 +187,6 @@ resource "aws_iam_policy" "terraform_pike" {
                 "ecs:DescribeTaskDefinition",
                 "ecs:ListTagsForResource",
                 "ecs:RegisterTaskDefinition",
-                "ecs:TagResource",
-                "ecs:UntagResource",
                 "ecs:UpdateService"
             ],
             "Resource": [
@@ -235,9 +228,7 @@ resource "aws_iam_policy" "terraform_pike" {
                 "iam:ListInstanceProfilesForRole",
                 "iam:ListRolePolicies",
                 "iam:PassRole",
-                "iam:PutRolePolicy",
-                "iam:TagRole",
-                "iam:UntagRole"
+                "iam:PutRolePolicy"
             ],
             "Resource": [
                 "*"
@@ -255,9 +246,7 @@ resource "aws_iam_policy" "terraform_pike" {
                 "logs:DisassociateKmsKey",
                 "logs:ListTagsForResource",
                 "logs:ListTagsLogGroup",
-                "logs:PutRetentionPolicy",
-                "logs:TagLogGroup",
-                "logs:UntagLogGroup"
+                "logs:PutRetentionPolicy"
             ],
             "Resource": [
                 "*"
@@ -271,6 +260,99 @@ resource "aws_iam_policy" "terraform_pike" {
                 "route53:GetChange",
                 "route53:GetHostedZone",
                 "route53:ListResourceRecordSets"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor6",
+            "Effect": "Allow",
+            "Action": [
+                "s3:CreateBucket",
+                "s3:DeleteBucket",
+                "s3:DeleteBucketPolicy",
+                "s3:GetAccelerateConfiguration",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketLogging",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketPublicAccessBlock",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketTagging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketWebsite",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetLifecycleConfiguration",
+                "s3:GetObject",
+                "s3:GetObjectAcl",
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucket",
+                "s3:PutBucketLogging",
+                "s3:PutBucketPolicy",
+                "s3:PutBucketPublicAccessBlock",
+                "s3:PutBucketVersioning",
+                "s3:PutEncryptionConfiguration",
+                "s3:PutLifecycleConfiguration"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+})
+}
+
+# plan role — read-only permissions for terraform plan
+resource "aws_iam_policy" "terraform_pike_plan" {
+  name_prefix = "terraform_pike_plan"
+  path        = "/"
+  description = "Pike Autogenerated policy from IAC"
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "ecs:DescribeTaskDefinition"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetRole"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetAccelerateConfiguration",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketLogging",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketTagging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketWebsite",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetLifecycleConfiguration",
+                "s3:GetObject",
+                "s3:GetObjectAcl",
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucket"
             ],
             "Resource": [
                 "*"

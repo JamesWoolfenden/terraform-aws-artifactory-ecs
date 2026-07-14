@@ -1,18 +1,10 @@
-resource "aws_secretsmanager_secret" "Artifactory" {
-  name = "Artifactory"
+resource "aws_secretsmanager_secret" "artifactory" {
+  name                    = "Artifactory"
+  kms_key_id              = var.kms_key_id
+  recovery_window_in_days = 7
 }
 
 resource "aws_secretsmanager_secret_version" "licence" {
-  secret_id     = aws_secretsmanager_secret.Artifactory.id
-  secret_string = jsonencode(var.Licence)
-}
-
-
-variable "Licence" {
-  type = map(string)
-}
-
-
-output "example" {
-  value = jsondecode(aws_secretsmanager_secret_version.licence.secret_string)["ArtifactoryLicense2"]
+  secret_id     = aws_secretsmanager_secret.artifactory.id
+  secret_string = jsonencode(var.licence)
 }
